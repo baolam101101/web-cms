@@ -6,65 +6,38 @@ import UserManagement from "./components/UserManagement";
 import PersonalSetting from "./components/PersonalSetting";
 import TransactionHistory from "./components/TransactionHistory";
 import ServiceManagement from "./components/ServiceManagement";
-import "./App.css";
+import { Role } from "./components/Role";
 
-const App = () =>{
-  const [userRole, setUserRole] = 
-  useState<'Admin' | 'Agent' | 'ServiceAdmin'>('Admin');
+const App: React.FC = () => {
+  const [selectedRole, setSelectedRole] = useState<Role | null>(null);
 
-  const renderUI = () => {
-    switch (userRole) {
-      case 'Admin':
-        return(
-          <>
-            <HomePage/>
-            <ServiceManagement/>
-            <UserManagement/>
-            <TransactionHistory/>
-            <PersonalSetting/>
-          </>
-        );
-      case 'ServiceAdmin':
-        return (
-          <>
-            <HomePage/>
-            <ServiceManagement/>
-            <TransactionHistory/>
-            <PersonalSetting/>
-          </>
-        );
-      case 'Agent':
-        return (
-          <>
-            <TransactionHistory/>
-            <PersonalSetting/>
-          </>
-        );
-        default:
-          return null;
-    }
+  const handleRoleSelect = (role: Role) => {
+    setSelectedRole(role);
   };
 
   return (
     <Router>
       <div>
-        <Sidebar/>
+      {selectedRole && <Sidebar role={selectedRole} />}
         <Routes>
-          <Route path="/" element={<HomePage />} />
+          <Route path="/home-page" element={<HomePage />} />
           <Route path="/user-management" element={<UserManagement />} />
           <Route path="/personal-setting" element={<PersonalSetting />} />
           <Route path="/transaction-history" element={<TransactionHistory />} />
           <Route path="/service-management" element={<ServiceManagement />} />
         </Routes>
+        
         <div className="pad">
-        <button onClick={() => setUserRole('Admin')}>Admin</button>
-        <button onClick={() => setUserRole('ServiceAdmin')}>Admin Service</button>
-        <button onClick={() => setUserRole('Agent')}>Agent</button>
-        {renderUI()}
+          <h2>Please choose your role</h2>
+          <button onClick={() => handleRoleSelect(Role.Admin)}>Admin</button>
+          <button onClick={() => handleRoleSelect(Role.ServiceAdmin)}>
+            Service Admin
+          </button>
+          <button onClick={() => handleRoleSelect(Role.Agent)}>Agent</button>
         </div>
       </div>
     </Router>
-  )
-}
-
+  );
+};
 export default App;
+
